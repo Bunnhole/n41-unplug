@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Gateway Console: unofficial local console for Arcadyan/Sercomm T-Mobile Home Internet gateways.
+// n41 unplug: unofficial local console for Arcadyan/Sercomm T-Mobile Home Internet gateways.
 // Serves the UI from ./public and proxies /api/* to http://<gateway>/TMI/v1/*. Binds to 127.0.0.1 only.
 // Zero dependencies. Node 18+ (uses global fetch).
 //
@@ -129,7 +129,7 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === '/api/_bye') { lastSeen = Date.now() - 5000; everSeen = true; return send(res, 200, '{"ok":true}'); }
   if (url.pathname.startsWith('/api/')) {
     // Gateway calls need a custom header. Cross-site pages cannot add one without a CORS preflight, which we never grant.
-    if (req.headers['x-gateway-console'] !== '1') return send(res, 403, JSON.stringify({ error: 'forbidden: missing X-Gateway-Console header' }));
+    if (req.headers['x-n41-unplug'] !== '1') return send(res, 403, JSON.stringify({ error: 'forbidden: missing X-N41-Unplug header' }));
     if (!['GET', 'POST', 'PUT', 'DELETE'].includes(req.method)) return send(res, 405, JSON.stringify({ error: 'method not allowed' }));
     return proxy(req, res, url);
   }
@@ -137,7 +137,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`Gateway Console  http://localhost:${PORT}`);
+  console.log(`n41 unplug  http://localhost:${PORT}`);
   console.log(MOCK ? 'Mode: MOCK gateway (password: mock)' : `Gateway: http://${GATEWAY}/TMI/v1`);
   if (AUTO_EXIT) console.log('Auto-exit: on (quits when the console window closes)');
 });

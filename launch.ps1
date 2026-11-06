@@ -1,4 +1,4 @@
-# Gateway Console launcher (Windows).
+# n41 unplug launcher (Windows).
 # Starts the server (hidden) if it is not already running, opens the console in an app-style
 # browser window, waits for that window to close, then stops the server it started.
 # The server is also started with --auto-exit, so it quits on its own ~8s after the last open
@@ -32,7 +32,7 @@ $browser = @(
 ) | Where-Object { Test-Path $_ } | Select-Object -First 1
 
 if ($browser) {
-    $profile = Join-Path $env:LOCALAPPDATA 'gateway-console\browser-profile'
+    $profile = Join-Path $env:LOCALAPPDATA 'n41-unplug\browser-profile'
     New-Item -ItemType Directory -Force $profile | Out-Null
     $win = Start-Process -FilePath $browser -ArgumentList @("--app=$url", "--user-data-dir=`"$profile`"", '--no-first-run', '--no-default-browser-check', '--disable-background-mode', '--disable-features=msEdgeStartupBoost', '--window-size=1180,860') -PassThru
     $win.WaitForExit()

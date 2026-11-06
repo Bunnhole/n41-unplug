@@ -1,4 +1,6 @@
-# Gateway Console
+# n41 unplug
+
+*The off switch your gateway didn't ship with.*
 
 An unofficial, local-only management console for the Arcadyan and Sercomm gateways used by T-Mobile Home Internet. It talks to the gateway's own local API, the same one its built-in dashboard uses, and exposes what that dashboard and the mobile app hide. Chief among them: the per-radio Wi-Fi on/off switches.
 
@@ -27,6 +29,8 @@ If you have a gateway in the "untested" rows, the Advanced tab's **Probe** butto
 
 On the G5AR the T-Life app shows your network name and password and a frequency-band picker, but no way to turn a radio off, and it refuses to delete the last network. The built-in web dashboard shows the same. The gateway's API, however, has an `isRadioEnabled` flag on each radio. This console gives you that switch, plus everything else the API exposes.
 
+The name: n41 is the 5G band most of these gateways spend their time on, and "unplug" is what the gateway's own screen asks you to do once every radio is off.
+
 ## Requirements
 
 - Node.js 18 or newer (uses the built-in `fetch`).
@@ -53,7 +57,7 @@ node server.js --mock                                # fake gateway for developm
 
 ### Windows launcher
 
-Run `install-shortcut.ps1` once to put a **Gateway Console** shortcut on your Desktop, or just double-click `Gateway Console.vbs`. It starts the server hidden, opens the console in its own app-style Edge or Chrome window, and stops the server when you close that window. Nothing keeps running afterward.
+Run `install-shortcut.ps1` once to put an **n41 unplug** shortcut on your Desktop, or just double-click `n41 unplug.vbs`. It starts the server hidden, opens the console in its own app-style Edge or Chrome window, and stops the server when you close that window. Nothing keeps running afterward.
 
 ## What each tab does
 
@@ -77,7 +81,7 @@ If you need a LAN of your own, put your own router behind the gateway (double NA
 ## How it works and what it does not do
 
 - `server.js` serves the static UI and proxies `/api/*` to `http://<gateway>/TMI/v1/*`. It binds to `127.0.0.1` only and refuses requests whose `Host` or `Origin` header is not localhost.
-- Gateway calls require a custom `X-Gateway-Console` header. A web page on another site cannot add one without a CORS preflight, which the server never grants, so a malicious page in your browser cannot drive the proxy.
+- Gateway calls require a custom `X-N41-Unplug` header. A web page on another site cannot add one without a CORS preflight, which the server never grants, so a malicious page in your browser cannot drive the proxy.
 - The UI is served with a Content Security Policy that blocks any script or connection not from the console itself.
 - The gateway password is sent once to the gateway's login endpoint and never stored. The returned token lives in the browser tab's `sessionStorage` and is gone when the tab closes.
 - Nothing is written to disk. There is no telemetry, analytics, update check, or network access of any kind beyond the gateway you point it at.
@@ -96,6 +100,16 @@ If you need a LAN of your own, put your own router behind the gateway (double NA
 - G5AR (API 3.1): config lives at `/network/configuration/v2`; the non-v2 path returns 404. Each radio exposes only `isRadioEnabled`. A write returns 200 with an empty body, and the config reads back empty for a few seconds. Telemetry has no `time` key and the 5G block has no `status` flag.
 - The stock G5AR dashboard reads `/version` and switches to the v2 path when the API version is 1.6 or higher. It never shows the radio switches and has no reboot.
 - These endpoints were identified by reading the JavaScript the gateway itself serves at `http://192.168.12.1/`. No authentication was bypassed and no firmware was extracted.
+
+## Related projects
+
+Other open-source tools for the same hardware family, each with a different focus:
+
+- [Arcadyan-5G-Web-Admin](https://github.com/christopherjnelson/Arcadyan-5G-Web-Admin): local web UI for the KVD21, including turning both radios off on that model's API.
+- [cloud-unpacked/tmhi](https://github.com/cloud-unpacked/tmhi): Go command-line tool for gateway and signal data and reboots, tested on the KVD21.
+- A widely shared browser-console snippet that disables Wi-Fi from the stock dashboard on older firmware.
+
+n41 unplug differs in supporting the G5AR's v2 configuration API, generating its forms from whatever the firmware returns, and shipping a click-to-run launcher that shuts itself down.
 
 ## Contributing
 

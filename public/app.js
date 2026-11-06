@@ -1,4 +1,4 @@
-/* Gateway Console front end. Vanilla JS, talks to /api/* which the local server proxies to the gateway. */
+/* n41 unplug front end. Vanilla JS, talks to /api/* which the local server proxies to the gateway. */
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -59,7 +59,7 @@ function setPath(o, path, v) { const last = path[path.length - 1]; getPath(o, pa
 
 // ---------- API ----------
 async function api(method, path, body) {
-  const headers = { 'X-Gateway-Console': '1' }; // the server refuses gateway calls without this (cross-site request guard)
+  const headers = { 'X-N41-Unplug': '1' }; // the server refuses gateway calls without this (cross-site request guard)
   if (state.token) headers.Authorization = 'Bearer ' + state.token;
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   const r = await fetch('/api' + path, { method, headers, body: body !== undefined ? JSON.stringify(body) : undefined });

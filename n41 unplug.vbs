@@ -1,4 +1,4 @@
-' Double-click launcher for Gateway Console (Windows). Runs launch.ps1 with no console window.
+' Double-click launcher for n41 unplug (Windows). Runs launch.ps1 with no console window.
 Set fso = CreateObject("Scripting.FileSystemObject")
 dir = fso.GetParentFolderName(WScript.ScriptFullName)
 Set sh = CreateObject("WScript.Shell")

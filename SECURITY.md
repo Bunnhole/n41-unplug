@@ -2,13 +2,13 @@
 
 ## Threat model
 
-Gateway Console is meant to run on one machine and be used from a browser on that same machine. It proxies requests to a gateway on the local network using the gateway's own admin credentials, which the user types in.
+n41 unplug is meant to run on one machine and be used from a browser on that same machine. It proxies requests to a gateway on the local network using the gateway's own admin credentials, which the user types in.
 
 What it defends against:
 
 - **Other machines on the network.** The server binds to `127.0.0.1` only.
 - **DNS rebinding and forged hosts.** Requests whose `Host` or `Origin` header is not `localhost`, `127.0.0.1`, or `[::1]` on the configured port are refused.
-- **Cross-site requests from a malicious web page in the user's browser.** Gateway calls require a custom `X-Gateway-Console` header. Browsers only send custom headers after a CORS preflight, and the server never answers one, so a page on another origin cannot reach the gateway through the proxy.
+- **Cross-site requests from a malicious web page in the user's browser.** Gateway calls require a custom `X-N41-Unplug` header. Browsers only send custom headers after a CORS preflight, and the server never answers one, so a page on another origin cannot reach the gateway through the proxy.
 - **Injected script in the UI.** A Content Security Policy restricts scripts and connections to the console's own origin.
 - **Credential leakage.** The gateway password is forwarded once to the gateway's login endpoint and never logged or stored. The session token is kept in `sessionStorage` and dies with the tab. Request logs contain method, path, and status only.
 - **Accidental disclosure.** The JSON export redacts device identifiers, SIM numbers, Wi-Fi passwords, MACs, and GPS by default.

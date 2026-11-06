@@ -1,5 +1,5 @@
 {
-  "name": "gateway-console",
+  "name": "n41-unplug",
   "version": "1.0.0",
   "description": "Unofficial local management console for Arcadyan/Sercomm T-Mobile Home Internet gateways (KVD21, G4AR, G4SE, G5AR). Exposes the per-radio Wi-Fi switches the official app hides.",
   "license": "MIT",
@@ -12,5 +12,5 @@
     "check": "node --check server.js && node --check mock.js && node --check public/app.js"
   },
   "keywords": ["t-mobile", "home-internet", "5g", "gateway", "arcadyan", "g5ar", "g4ar", "kvd21", "wifi"],
-  "repository": { "type": "git", "url": "https://github.com/CHANGE-ME/gateway-console" }
+  "repository": { "type": "git", "url": "https://github.com/CHANGE-ME/n41-unplug" }
 }

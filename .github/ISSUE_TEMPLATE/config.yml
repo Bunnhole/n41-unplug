@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Security issue
-    url: https://github.com/CHANGE-ME/n41-unplug/security/advisories/new
+    url: https://github.com/Bunnhole/n41-unplug/security/advisories/new
     about: Report a vulnerability privately instead of opening a public issue.

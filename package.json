@@ -13,5 +13,5 @@
     "test": "node test/smoke.js"
   },
   "keywords": ["t-mobile", "home-internet", "5g", "gateway", "arcadyan", "g5ar", "g4ar", "kvd21", "wifi"],
-  "repository": { "type": "git", "url": "https://github.com/CHANGE-ME/n41-unplug" }
+  "repository": { "type": "git", "url": "https://github.com/Bunnhole/n41-unplug" }
 }

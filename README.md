@@ -138,6 +138,10 @@ n41 unplug differs in supporting the G5AR's v2 configuration API, generating its
 
 Issues and pull requests are welcome, especially probe output and config shapes from gateways in the untested rows. Keep the project dependency-free. Run `npm test` before sending a change; it starts the mock gateway and checks the request guards, login, and a Wi-Fi config round trip. Please redact IMEI, SIM, serial, and MAC values from anything you paste; the export tool does that for you.
 
+## Credits
+
+Made by [Bunnhole](https://github.com/Bunnhole) and Claude.
+
 ## Legal
 
 **License.** MIT. See [LICENSE](LICENSE).

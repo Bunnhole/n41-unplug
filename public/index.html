@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gateway Console</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-title">Gateway Console</div>
+      <div class="brand-sub" id="gateway-label">—</div>
+    </div>
+    <nav id="nav">
+      <button data-view="overview" class="active">Overview</button>
+      <button data-view="wifi">Wi-Fi</button>
+      <button data-view="clients">Clients</button>
+      <button data-view="cellular">Cellular</button>
+      <button data-view="advanced">Advanced</button>
+      <button data-view="tools">Tools</button>
+    </nav>
+    <div class="sidebar-foot">
+      <div id="auth-state" class="muted">Not logged in</div>
+      <button id="auth-btn" class="btn small">Log in</button>
+      <div class="disclaimer">Unofficial tool. Not affiliated with or endorsed by T-Mobile, Deutsche Telekom, Arcadyan or Sercomm. Uses an undocumented gateway API; use at your own risk.</div>
+    </div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<div id="login" class="modal hidden">
+  <form class="modal-card" id="login-form">
+    <h2>Log in to gateway</h2>
+    <p class="muted" id="login-msg">Admin password is on the sticker on the bottom of the gateway.</p>
+    <label>Username <input name="username" value="admin" autocomplete="username"></label>
+    <label>Password <input name="password" type="password" autocomplete="current-password" autofocus></label>
+    <div class="row end">
+      <button type="button" class="btn ghost" id="login-cancel">Cancel</button>
+      <button type="submit" class="btn primary">Log in</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

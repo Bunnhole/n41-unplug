@@ -1,0 +1,19 @@
+# editor / tooling state that is local to one machine
+.claude/
+.vscode/
+.idea/
+
+# runtime
+node_modules/
+*.log
+npm-debug.log*
+
+# exports and private backups
+gateway-full-*.json
+gateway-redacted-*.json
+*.private.*
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini

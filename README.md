@@ -12,6 +12,8 @@ Zero dependencies. One `node server.js`. Nothing leaves your machine except requ
 ![Overview tab](docs/overview.jpg)
 ![Wi-Fi tab with per-radio switches](docs/wifi.jpg)
 
+*Screenshots are from the built-in mock gateway (`--mock`), hence the MOCK label.*
+
 ## Supported hardware
 
 The console speaks the `TMI/v1` HTTP API found on the Arcadyan and Sercomm gateways. Nokia and Sagemcom gateways use different firmware and will **not** work.
@@ -57,7 +59,23 @@ node server.js --mock                                # fake gateway for developm
 
 ### Windows launcher
 
-Run `install-shortcut.ps1` once to put an **n41 unplug** shortcut on your Desktop, or just double-click `n41 unplug.vbs`. It starts the server hidden, opens the console in its own app-style Edge or Chrome window, and stops the server when you close that window. Nothing keeps running afterward.
+Run `install-shortcut.ps1` once to put an **n41 unplug** shortcut on your Desktop, or just double-click `n41 unplug.vbs`. A small splash window shows progress while it starts the server hidden and opens the console in its own app-style Edge or Chrome window. Closing that window stops the server. Nothing keeps running afterward.
+
+If you downloaded a zip rather than cloning, Windows marks the files as from the internet and may block the launcher silently. Right-click `n41 unplug.vbs` and `launch.ps1`, open Properties, tick **Unblock**, or run this once in the folder:
+
+```
+Get-ChildItem -Recurse | Unblock-File
+```
+
+The launcher is a VBScript that starts a hidden PowerShell, which is also a pattern some antivirus products dislike. If yours flags it, `start.cmd` does the same job in a visible console window with no scripting tricks.
+
+### macOS and Linux
+
+```
+./launch.sh
+```
+
+Starts the server with `--auto-exit` and opens your default browser. The server quits on its own when the tab closes.
 
 ## What each tab does
 
@@ -86,9 +104,14 @@ If you need a LAN of your own, put your own router behind the gateway (double NA
 - The gateway password is sent once to the gateway's login endpoint and never stored. The returned token lives in the browser tab's `sessionStorage` and is gone when the tab closes.
 - Nothing is written to disk. There is no telemetry, analytics, update check, or network access of any kind beyond the gateway you point it at.
 - The JSON export redacts IMEI, SIM identifiers, phone number, serial, MAC addresses, Wi-Fi passwords, and GPS by default. Tick the box only for a private backup.
+- Wi-Fi saves are checked against the stock dashboard's limits (network name 1 to 28 characters, password 8 to 63, at least one band per network) before anything is sent, and saving with a radio turned off asks first.
+- The session token is refreshed a minute before it expires, so a long session does not bounce you back to the login box.
 
 ## Troubleshooting
 
+- **The launcher does nothing or the splash never appears**: see the Unblock note under Windows launcher, or run `start.cmd` to see the error. The launcher writes a log of its last run to `%LOCALAPPDATA%\n41-unplug\launcher.log`; attach it to a bug report.
+- **"Node.js 18 or newer required"**: the server checks at startup. Upgrade from nodejs.org.
+- **"Port 8787 is in use by another program"**: something else owns that port. Run `node server.js --port 8790` and open that port instead; the launcher takes `-Port 8790` too.
 - **"Gateway unreachable"**: the machine cannot reach the gateway address. Check you can open `http://192.168.12.1/` in a browser. Pass `--gateway` if yours is elsewhere.
 - **Login fails**: the password is the one on the sticker, unless you changed it in the dashboard or the app. Username is `admin`.
 - **Wi-Fi tab shows an error**: your firmware may use a path this console does not know. Run the probe in the Advanced tab and open an issue with the output.
@@ -113,7 +136,7 @@ n41 unplug differs in supporting the G5AR's v2 configuration API, generating its
 
 ## Contributing
 
-Issues and pull requests are welcome, especially probe output and config shapes from gateways in the untested rows. Keep the project dependency-free. Run `npm run check` before sending a change. Please redact IMEI, SIM, serial, and MAC values from anything you paste; the export tool does that for you.
+Issues and pull requests are welcome, especially probe output and config shapes from gateways in the untested rows. Keep the project dependency-free. Run `npm test` before sending a change; it starts the mock gateway and checks the request guards, login, and a Wi-Fi config round trip. Please redact IMEI, SIM, serial, and MAC values from anything you paste; the export tool does that for you.
 
 ## Legal
 

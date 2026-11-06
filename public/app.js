@@ -72,11 +72,31 @@ async function api(method, path, body) {
   }
   return data;
 }
-function setToken(t) {
+function setToken(t, expiration) {
   state.token = t;
   if (t) sessionStorage.setItem('gw_token', t); else sessionStorage.removeItem('gw_token');
+  if (expiration) sessionStorage.setItem('gw_token_exp', String(expiration)); else if (!t) sessionStorage.removeItem('gw_token_exp');
   $('#auth-state').textContent = t ? 'Logged in as admin' : 'Not logged in';
   $('#auth-btn').textContent = t ? 'Log out' : 'Log in';
+  scheduleRefresh();
+}
+// Gateway tokens expire (the login reply says when). Refresh a minute early so long sessions never bounce to the login box.
+let refreshTimer = null;
+function scheduleRefresh() {
+  clearTimeout(refreshTimer); refreshTimer = null;
+  const exp = Number(sessionStorage.getItem('gw_token_exp') || 0);
+  if (!state.token || !exp) return;
+  const delay = Math.max(10000, exp * 1000 - Date.now() - 60000);
+  refreshTimer = setTimeout(async () => {
+    try {
+      const r = await api('POST', '/auth/refresh', {});
+      const tok = r?.auth?.token || r?.token;
+      if (tok) setToken(tok, r?.auth?.expiration); else throw new Error('no token in refresh reply');
+    } catch (e) {
+      // Refresh is best-effort; the next 401 will prompt for login.
+      sessionStorage.removeItem('gw_token_exp');
+    }
+  }, delay);
 }
 function requireAuth() { if (!state.token) { showLogin(); return false; } return true; }
 
@@ -94,7 +114,7 @@ $('#login-form').onsubmit = async (ev) => {
     const r = await api('POST', '/auth/login', { username: f.username.value, password: f.password.value });
     const tok = r?.auth?.token || r?.token;
     if (!tok) throw new Error('No token in response: ' + JSON.stringify(r).slice(0, 200));
-    setToken(tok);
+    setToken(tok, r?.auth?.expiration);
     f.password.value = '';
     $('#login').classList.add('hidden');
     toast('Logged in', 'ok');
@@ -305,8 +325,22 @@ async function viewWifi() {
     if (Object.keys(rest).length) grid.append(el('div', { class: 'card' }, el('h3', {}, 'Other'), objectForm(rest, [], change)));
     body.append(grid);
   }
+  function validate(ap) {
+    // Same limits the stock dashboard enforces. A bad write here can strand every device on the Wi-Fi.
+    const problems = [];
+    for (const [i, s] of (ap.ssids || []).entries()) {
+      const label = s.ssidName ? `"${s.ssidName}"` : `network ${i + 1}`;
+      if (typeof s.ssidName === 'string' && (s.ssidName.length < 1 || s.ssidName.length > 28)) problems.push(`${label}: network name must be 1 to 28 characters`);
+      if (typeof s.wpaKey === 'string' && (s.wpaKey.length < 8 || s.wpaKey.length > 63)) problems.push(`${label}: password must be 8 to 63 characters`);
+      const bands = Object.keys(s).filter((k) => /ghzSsid$/.test(k));
+      if (bands.length && !bands.some((k) => s[k])) problems.push(`${label}: pick at least one band`);
+    }
+    return problems;
+  }
   async function save(skipConfirm) {
     if (!dirty()) return;
+    const problems = validate(state.ap);
+    if (problems.length) { problems.forEach((p) => toast(p, 'bad')); return; }
     if (!skipConfirm) {
       const turningOff = Object.entries(state.ap).filter(([k, v]) => isBand(k, v) && state.apOriginal?.[k]?.isRadioEnabled && !v.isRadioEnabled).map(([k]) => BAND_NAMES[k] || k);
       if (turningOff.length && !confirm(`This turns off the ${turningOff.join(' and ')} radio${turningOff.length > 1 ? 's' : ''}. Devices on that Wi-Fi will disconnect. Continue?`)) return;

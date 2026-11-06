@@ -7,6 +7,12 @@
 //   node server.js --gateway 192.168.12.1 --port 8787
 //   node server.js --mock               -> fake gateway for UI testing (password: mock)
 
+const nodeMajor = Number(process.versions.node.split('.')[0]);
+if (nodeMajor < 18) {
+  console.error(`n41 unplug needs Node.js 18 or newer (you have ${process.versions.node}). Download it from https://nodejs.org/`);
+  process.exit(1);
+}
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -141,3 +147,13 @@ server.listen(PORT, '127.0.0.1', () => {
   console.log(MOCK ? 'Mode: MOCK gateway (password: mock)' : `Gateway: http://${GATEWAY}/TMI/v1`);
   if (AUTO_EXIT) console.log('Auto-exit: on (quits when the console window closes)');
 });
+server.on('error', (e) => {
+  console.error(e.code === 'EADDRINUSE' ? `Port ${PORT} is already in use. Try: node server.js --port ${PORT + 3}` : `Server error: ${e.message}`);
+  process.exit(1);
+});
+
+// Also answer on the IPv6 loopback: some browsers resolve "localhost" to ::1 first and would otherwise stall.
+// Same handler, same host checks. Skipped quietly on machines without IPv6.
+const server6 = http.createServer(server.listeners('request')[0]);
+server6.on('error', () => {});
+server6.listen(PORT, '::1');

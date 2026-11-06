@@ -1,0 +1,35 @@
+name: Bug report
+description: Something in n41 unplug does not work
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks. Please **redact** serial numbers, IMEI, SIM numbers, MAC addresses and Wi-Fi passwords from anything you paste. The Tools tab export does this by default.
+  - type: input
+    id: model
+    attributes:
+      label: Gateway model and firmware
+      description: From the Overview tab, e.g. "TMO-G5AR, 1.00.06"
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: OS and Node version
+      placeholder: "Windows 11, Node 22.11"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you saw instead. Error text from the page or the server window helps.
+    validations:
+      required: true
+  - type: textarea
+    id: probe
+    attributes:
+      label: Probe output (Advanced tab)
+      description: Click "Probe known endpoints" and paste the result. It contains only status codes and key names.
+      render: text

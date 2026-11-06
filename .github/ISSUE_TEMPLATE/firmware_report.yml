@@ -1,0 +1,40 @@
+name: Firmware / gateway report
+description: Tell us how n41 unplug behaves on a gateway or firmware not yet listed as tested
+labels: [firmware]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is how untested models become tested ones. Please **redact** serial, IMEI, SIM numbers, MACs and Wi-Fi passwords. The Tools tab export redacts them by default.
+  - type: input
+    id: model
+    attributes:
+      label: Gateway model and firmware
+      placeholder: "TMO-G4AR, 1.03.11"
+    validations:
+      required: true
+  - type: dropdown
+    id: tabs
+    attributes:
+      label: Which tabs worked?
+      multiple: true
+      options:
+        - Overview
+        - Wi-Fi (read)
+        - Wi-Fi (save)
+        - Clients
+        - Cellular
+        - Tools reboot
+  - type: textarea
+    id: probe
+    attributes:
+      label: Probe output (Advanced tab)
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Wi-Fi config shape
+      description: Run the "Wi-Fi config" preset in the Advanced tab and paste the reply with the password replaced by <redacted>.
+      render: json

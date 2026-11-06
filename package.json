@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node server.js",
     "mock": "node server.js --mock",
-    "check": "node --check server.js && node --check mock.js && node --check public/app.js"
+    "check": "node --check server.js && node --check mock.js && node --check public/app.js",
+    "test": "node test/smoke.js"
   },
   "keywords": ["t-mobile", "home-internet", "5g", "gateway", "arcadyan", "g5ar", "g4ar", "kvd21", "wifi"],
   "repository": { "type": "git", "url": "https://github.com/CHANGE-ME/n41-unplug" }
